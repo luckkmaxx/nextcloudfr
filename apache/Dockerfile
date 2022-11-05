@@ -133,7 +133,7 @@ RUN mkdir -p \
     /var/run/supervisord \
 ;
 
-COPY supervisord.conf /
+COPY apache/supervisord.conf /
 
 ENV NEXTCLOUD_UPDATE=1
 ENV PHP_MEMORY_LIMIT=1G
