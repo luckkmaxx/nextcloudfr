@@ -51,11 +51,11 @@ RUN apt-get update ; \
     apt-get install -y libopenblas-base
 
 # Install dlib and PDlib to image
-COPY --from=builder /usr/local/lib/libdlib.so* /usr/local/lib/
+COPY --from=builder /usr/local/lib/libdlib.so /usr/local/lib/
 
 # If is necesary take the php extention folder uncommenting the next line
 # RUN php -i | grep extension_dir
-COPY --from=builder  /usr/local/lib/php/extensions/no-debug-non-zts-20210902/pdlib.so /usr/local/lib/php/extensions/no-debug-non-zts-20200930/
+COPY --from=builder  /usr/local/lib/php/extensions/no-debug-non-zts-20210902/pdlib.so /usr/local/lib/php/extensions/no-debug-non-zts-20210902/
 
 # Enable PDlib on final image
 RUN echo "extension=pdlib.so" > /usr/local/etc/php/conf.d/pdlib.ini
@@ -65,7 +65,7 @@ RUN echo 'memory_limit=${MEMORY_LIMIT}' > /usr/local/etc/php/conf.d/memory-limit
 
 # At this point you meet all the dependencies to install the application
 # If is available you can skip this step and install the application from the application store
-ARG FR_BRANCH=master
+ARG FR_BRANCH=v0.9.10-beta.1
 RUN apt-get install -y wget unzip nodejs npm
 RUN wget -c -q -O facerecognition https://github.com/matiasdelellis/facerecognition/archive/$FR_BRANCH.zip \
   && unzip facerecognition \
