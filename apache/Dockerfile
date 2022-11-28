@@ -65,13 +65,13 @@ RUN echo 'memory_limit=${MEMORY_LIMIT}' > /usr/local/etc/php/conf.d/memory-limit
 
 # At this point you meet all the dependencies to install the application
 # If is available you can skip this step and install the application from the application store
-ARG FR_BRANCH=v0.9.10-beta.1
-RUN apt-get install -y wget unzip nodejs npm
-RUN wget -c -q -O facerecognition https://github.com/matiasdelellis/facerecognition/archive/$FR_BRANCH.zip \
-  && unzip facerecognition \
-  && mv facerecognition-*  /usr/src/nextcloud/facerecognition \
-  && cd /usr/src/nextcloud/facerecognition \
-  && make; \
+#ARG FR_BRANCH=v0.9.10-beta.1
+#RUN apt-get install -y wget unzip nodejs npm
+#RUN wget -c -q -O facerecognition https://github.com/matiasdelellis/facerecognition/archive/$FR_BRANCH.zip \
+#  && unzip facerecognition \
+#  && mv facerecognition-*  /usr/src/nextcloud/facerecognition \
+#  && cd /usr/src/nextcloud/facerecognition \
+#  && make; \
 
 RUN set -ex; \
 
@@ -128,16 +128,16 @@ RUN set -ex; \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
 ;
 
-RUN mkdir -p \
-    /var/log/supervisord \
-    /var/run/supervisord \
-;
+#RUN mkdir -p \
+#    /var/log/supervisord \
+#    /var/run/supervisord \
+#;
 
-COPY apache/supervisord.conf /
+#COPY apache/supervisord.conf /
 
 ENV NEXTCLOUD_UPDATE=1
 ENV PHP_MEMORY_LIMIT=1G
 
-RUN echo '*/30 * * * * php -f /var/www/html/occ face:background_job -t 900' >> /var/spool/cron/crontabs/www-data
+#RUN echo '*/30 * * * * php -f /var/www/html/occ face:background_job -t 900' >> /var/spool/cron/crontabs/www-data
 RUN sed -i -e '/^<VirtualHost/,/<\/VirtualHost>/ { /<\/VirtualHost>/ i\Header always set Strict-Transport-Security "max-age=15552000; includeSubDomain"' -e '}' /etc/apache2/sites-enabled/000-default.conf
-CMD ["/usr/bin/supervisord", "-c", "/supervisord.conf"]
+#CMD ["/usr/bin/supervisord", "-c", "/supervisord.conf"]
