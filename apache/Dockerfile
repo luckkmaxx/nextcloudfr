@@ -64,69 +64,7 @@ RUN echo "extension=pdlib.so" > /usr/local/etc/php/conf.d/pdlib.ini
 RUN echo 'memory_limit=${MEMORY_LIMIT}' > /usr/local/etc/php/conf.d/memory-limit.ini
 
 # At this point you meet all the dependencies to install the application
-# If is available you can skip this step and install the application from the application store
-###ARG FR_BRANCH=v0.9.10-beta.1
-###RUN apt-get install -y wget unzip nodejs npm
-###RUN wget -c -q -O facerecognition https://github.com/matiasdelellis/facerecognition/archive/$FR_BRANCH.zip \
-###  && unzip facerecognition \
-###  && mv facerecognition-*  /usr/src/nextcloud/facerecognition \
-###  && cd /usr/src/nextcloud/facerecognition \
-###  && make; \
-
-RUN set -ex; \
-
-RUN set -ex; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
-        ffmpeg \
-        libmagickcore-6.q16-6-extra \
-        procps \
-        smbclient \
-        supervisor \
-        libreoffice \
-        vim \
-        libfuse2 \
-        fuse \
-        fontconfig \
-        exiftool \
-        gnupg \
-    ; \
-
-RUN set -ex; \
-    \
-    savedAptMark="$(apt-mark showmanual)"; \
-    \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
-        libbz2-dev \
-        libc-client-dev \
-        libkrb5-dev \
-        libsmbclient-dev \
-    ; \
-    \
-    docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
-    docker-php-ext-install \
-        bz2 \
-        imap \
-    ; \
-    pecl install smbclient; \
-    docker-php-ext-enable smbclient; \
-    \
-# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-    apt-mark auto '.*' > /dev/null; \
-    apt-mark manual $savedAptMark; \
-    ldd "$(php -r 'echo ini_get("extension_dir");')"/*.so \
-        | awk '/=>/ { print $3 }' \
-        | sort -u \
-        | xargs -r dpkg-query -S \
-        | cut -d: -f1 \
-        | sort -u \
-        | xargs -rt apt-mark manual; \
-    
-    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-    rm -rf /var/lib/apt/lists/*; \
-    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-;
+# Install the application from the application store
 
 RUN mkdir -p \
     /var/log/supervisord \
